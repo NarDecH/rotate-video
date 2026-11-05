@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+build/
+dist/
+vendor/
+tmp/
+*.spec
+
+# local media (never commit large videos)
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.wmv
+*.webm
+*.ogv
+.freebuff/
