@@ -104,7 +104,7 @@ build.sh         สร้าง exe (onefile) หรือโฟลเดอร
 สร้างใหม่:
 
 ```bash
-pip install pyinstaller windnd
+pip install -r requirements-dev.txt
 bash build.sh          # dist/RotateVideo.exe (ไฟล์เดียว)
 bash build.sh onedir   # dist/RotateVideo/ + RotateVideo-portable.zip (เปิดเร็วกว่า)
 ```
