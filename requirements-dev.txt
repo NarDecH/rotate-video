@@ -1,5 +1,6 @@
 # Build-time dependencies only (the packaged exe needs none of these).
 pyinstaller>=6.10
 windnd>=0.0.12
-imageio-ffmpeg>=0.5
+# Pinned: this is the FFmpeg build that ships inside the release exe.
+imageio-ffmpeg==0.6.0
 pillow>=10

@@ -20,7 +20,11 @@ echo "[2/5] สร้างไอคอน"
 "$PY" tools/make_icon.py
 
 echo "[3/5] ตรวจสอบด้วย self-test (โหมด dev)"
-"$PY" app.py --selftest
+if ! "$PY" app.py --selftest; then
+  echo "--- selftest log ---"
+  cat "${TEMP:-/tmp}/RotateVideo-selftest.log" 2>/dev/null || true
+  exit 1
+fi
 
 echo "[4/5] แพ็ก ($MODE)"
 COMMON=(--noconfirm --clean --windowed --name RotateVideo
