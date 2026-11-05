@@ -3,6 +3,11 @@
 โปรแกรม Windows แบบ **ไฟล์เดียว** สำหรับหมุนวิดีโอ 90° / 180° และพลิกภาพ
 **ไม่ต้องติดตั้ง FFmpeg หรืออะไรเพิ่ม** (ฝังไว้ใน exe แล้ว)
 
+[![build](https://github.com/NarDecH/rotate-video/actions/workflows/build.yml/badge.svg)](https://github.com/NarDecH/rotate-video/actions/workflows/build.yml)
+
+**ดาวน์โหลด:** [GitHub Releases](https://github.com/NarDecH/rotate-video/releases) —
+เลือก `RotateVideo.exe` (ไฟล์เดียว) หรือ `RotateVideo-portable.zip` (เปิดเร็วกว่า)
+
 ![หน้าตาโปรแกรม](screenshot.png)
 
 ## ใช้งาน
@@ -80,6 +85,12 @@ RotateVideo.exe *.mp4 --rotate cw90 --mode crf --out D:\rotated --gpu
 - โค้ดในโปรเจกต์นี้: MIT (ดู `LICENSE`)
 - FFmpeg ที่ฝังใน exe: **GPLv3** — ถ้าแจกจ่ายให้บุคคลภายนอกต้องปฏิบัติตาม GPL
   รายละเอียดใน `THIRD-PARTY.md`
+
+## ซอร์สโค้ดและ CI
+
+- Repository: <https://github.com/NarDecH/rotate-video>
+- GitHub Actions จะรัน self-test แล้ว build ทั้งแบบไฟล์เดียวและโฟลเดอร์ทุกครั้งที่ push
+  และจะสร้าง Release อัตโนมัติเมื่อ push tag `v*`
 
 ## สำหรับนักพัฒนา
 

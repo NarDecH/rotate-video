@@ -1,0 +1,78 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller windnd imageio-ffmpeg pillow
+
+      - name: Self-test and build (single file)
+        shell: bash
+        run: bash build.sh
+
+      - name: Build portable folder and zip
+        shell: bash
+        run: bash build.sh onedir
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: RotateVideo-windows-x64
+          path: |
+            dist/RotateVideo.exe
+            dist/RotateVideo-portable.zip
+          if-no-files-found: error
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat > notes.md <<'EOF'
+          Portable Windows app that rotates and mirrors videos without losing quality.
+
+          **Downloads**
+          - `RotateVideo.exe` - single file, nothing to install (FFmpeg is embedded)
+          - `RotateVideo-portable.zip` - folder build, starts faster
+
+          Default mode only rewrites the rotation metadata (bitstream untouched).
+          Optional modes bake the rotation into pixels, either pixel-exact lossless
+          or high-quality CRF 16.
+
+          **Licence:** application code is MIT. The bundled FFmpeg build is GPLv3;
+          see THIRD-PARTY.md in the repository for source and obligations.
+
+          The executable is not code-signed, so Windows SmartScreen may warn on the
+          first run (More info -> Run anyway).
+          EOF
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" \
+              dist/RotateVideo.exe dist/RotateVideo-portable.zip --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              dist/RotateVideo.exe dist/RotateVideo-portable.zip \
+              --title "Rotate Video $GITHUB_REF_NAME" \
+              --notes-file notes.md
+          fi
