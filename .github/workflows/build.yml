@@ -36,6 +36,13 @@ jobs:
         shell: bash
         run: bash build.sh onedir
 
+      - name: Generate checksums
+        shell: bash
+        run: |
+          cd dist
+          sha256sum RotateVideo.exe RotateVideo-portable.zip | sed 's/ \*/  /' > SHA256SUMS
+          cat SHA256SUMS
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -43,6 +50,7 @@ jobs:
           path: |
             dist/RotateVideo.exe
             dist/RotateVideo-portable.zip
+            dist/SHA256SUMS
           if-no-files-found: error
 
       - name: Publish release
@@ -68,12 +76,39 @@ jobs:
           The executable is not code-signed, so Windows SmartScreen may warn on the
           first run (More info -> Run anyway).
           EOF
+
+          echo >> notes.md
+          echo '**SHA-256 checksums** (`SHA256SUMS`)' >> notes.md
+          echo >> notes.md
+          echo '```' >> notes.md
+          cat dist/SHA256SUMS >> notes.md
+          echo '```' >> notes.md
+          echo >> notes.md
+          echo 'Verify with `sha256sum -c SHA256SUMS` (Linux/macOS) or `Get-FileHash` (PowerShell).' >> notes.md
+
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" \
-              dist/RotateVideo.exe dist/RotateVideo-portable.zip --clobber
+              dist/RotateVideo.exe dist/RotateVideo-portable.zip dist/SHA256SUMS --clobber
+            gh release view "$GITHUB_REF_NAME" --json body --jq .body > live.md
+            python - <<'PY'
+          from pathlib import Path
+
+          marker = "**SHA-256 checksums**"
+          notes = Path("live.md").read_text(encoding="utf-8")
+          cut = notes.find(marker)
+          if cut != -1:
+              notes = notes[:cut].rstrip()
+          sums = Path("dist/SHA256SUMS").read_text(encoding="utf-8").strip()
+          notes += (
+              "\n\n" + marker + " (`SHA256SUMS`)\n\n```\n" + sums + "\n```\n\n"
+              "Verify with `sha256sum -c SHA256SUMS` (Linux/macOS) or `Get-FileHash` (PowerShell).\n"
+          )
+          Path("notes.md").write_text(notes, encoding="utf-8")
+          PY
+            gh release edit "$GITHUB_REF_NAME" --notes-file notes.md
           else
             gh release create "$GITHUB_REF_NAME" \
-              dist/RotateVideo.exe dist/RotateVideo-portable.zip \
+              dist/RotateVideo.exe dist/RotateVideo-portable.zip dist/SHA256SUMS \
               --title "Rotate Video $GITHUB_REF_NAME" \
               --notes-file notes.md
           fi
