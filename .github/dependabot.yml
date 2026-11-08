@@ -1,0 +1,8 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Actions are pinned to commit SHAs; Dependabot rewrites the SHA and the
+    # trailing "# vX.Y.Z" comment when a new release is tagged.
