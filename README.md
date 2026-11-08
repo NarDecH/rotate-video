@@ -21,6 +21,15 @@ $want = ((Get-Content .\SHA256SUMS | Where-Object { $_ -match 'RotateVideo\.exe'
 
 ได้ `True` = ไฟล์ตรงกับที่ CI สร้าง (เปลี่ยนชื่อไฟล์เป็น `RotateVideo-portable.zip` เพื่อตรวจ zip)
 
+**Windows (Command Prompt — ไม่ใช้ PowerShell)**
+
+```bat
+certutil -hashfile RotateVideo.exe SHA256
+```
+
+นำค่า hash ที่ได้ไปเทียบกับบรรทัดของ `RotateVideo.exe` ใน `SHA256SUMS`
+(SHA-256 ไม่สนตัวพิมพ์เล็ก/ใหญ่)
+
 **Linux / macOS**
 
 ```bash
