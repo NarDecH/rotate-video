@@ -24,7 +24,7 @@ from tkinter import filedialog, messagebox, ttk
 import rotate_core as core
 
 APP_NAME = "Rotate Video"
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.2.0"
 
 
 def resource(rel: str) -> Path:
