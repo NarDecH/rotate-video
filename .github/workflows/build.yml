@@ -115,3 +115,27 @@ jobs:
               --title "Rotate Video $GITHUB_REF_NAME" \
               --notes-file notes.md
           fi
+
+          echo "Verifying release notes"
+          BODY="$(gh release view "$GITHUB_REF_NAME" --json body --jq .body)" python - <<'PY'
+          import os
+          import pathlib
+          import sys
+
+          body = os.environ["BODY"].replace("\r\n", "\n")
+          sums = pathlib.Path("dist/SHA256SUMS").read_text(encoding="utf-8").replace("\r\n", "\n").strip()
+          checks = {
+              "checksum marker": ("**SHA-256 checksums**", 1),
+              "verify line": ("Verify with `sha256sum -c SHA256SUMS`", 1),
+              "README link": ("วิธีตรวจโดยละเอียด", 1),
+              "checksum block": (sums, 1),
+          }
+          ok = True
+          for name, (needle, expected) in checks.items():
+              count = body.count(needle)
+              print(f"{name}: {count} (expected {expected})")
+              if count != expected:
+                  print(f"::error::{name} appears {count} times, expected {expected}")
+                  ok = False
+          sys.exit(0 if ok else 1)
+          PY
