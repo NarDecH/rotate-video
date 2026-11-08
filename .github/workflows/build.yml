@@ -85,6 +85,8 @@ jobs:
           echo '```' >> notes.md
           echo >> notes.md
           echo 'Verify with `sha256sum -c SHA256SUMS` (Linux/macOS) or `Get-FileHash` (PowerShell).' >> notes.md
+          echo >> notes.md
+          echo 'วิธีตรวจโดยละเอียด: [README — ตรวจไฟล์ที่ดาวน์โหลด (SHA-256)](https://github.com/NarDecH/rotate-video#ตรวจไฟล์ที่ดาวน์โหลด-sha-256)' >> notes.md
 
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" \
@@ -103,6 +105,7 @@ jobs:
               "\n\n" + marker + " (`SHA256SUMS`)\n\n```\n" + sums + "\n```\n\n"
               "Verify with `sha256sum -c SHA256SUMS` (Linux/macOS) or `Get-FileHash` (PowerShell).\n"
           )
+          notes += "\nวิธีตรวจโดยละเอียด: [README — ตรวจไฟล์ที่ดาวน์โหลด (SHA-256)](https://github.com/NarDecH/rotate-video#ตรวจไฟล์ที่ดาวน์โหลด-sha-256)\n"
           Path("notes.md").write_text(notes, encoding="utf-8")
           PY
             gh release edit "$GITHUB_REF_NAME" --notes-file notes.md
