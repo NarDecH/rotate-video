@@ -8,6 +8,28 @@
 **ดาวน์โหลด:** [GitHub Releases](https://github.com/NarDecH/rotate-video/releases) —
 เลือก `RotateVideo.exe` (ไฟล์เดียว) หรือ `RotateVideo-portable.zip` (เปิดเร็วกว่า)
 
+### ตรวจไฟล์ที่ดาวน์โหลด (SHA-256)
+
+ทุก Release แนบ `SHA256SUMS` มาด้วย — โหลดไฟล์นั้นไว้ในโฟลเดอร์เดียวกับ exe/zip แล้วตรวจ
+
+**Windows (PowerShell)**
+
+```powershell
+$want = ((Get-Content .\SHA256SUMS | Where-Object { $_ -match 'RotateVideo\.exe' }) -split '\s+')[0]
+(Get-FileHash .\RotateVideo.exe -Algorithm SHA256).Hash -eq $want
+```
+
+ได้ `True` = ไฟล์ตรงกับที่ CI สร้าง (เปลี่ยนชื่อไฟล์เป็น `RotateVideo-portable.zip` เพื่อตรวจ zip)
+
+**Linux / macOS**
+
+```bash
+sha256sum -c SHA256SUMS        # Linux
+shasum -a 256 -c SHA256SUMS    # macOS
+```
+
+ขึ้น `OK` ครบทุกบรรทัด = ผ่าน
+
 ![หน้าตาโปรแกรม](screenshot.png)
 
 ## ใช้งาน
